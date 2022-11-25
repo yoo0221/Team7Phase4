@@ -20,4 +20,5 @@ from main import views as mainview
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', mainview.index, name='index'),
+    path('admin2/',mainview.test),
 ]
