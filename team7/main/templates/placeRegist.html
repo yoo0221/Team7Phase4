@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장소 등록</title>
+</head>
+<body>
+    <form action = "{% url "placeRegSubmit" %}" method = "POST">
+        {% csrf_token %}
+        <h3>장소 등록 페이지입니다.</h3>
+        <input type = "text" name = "placeName" placeholder = "장소의 이름을 입력하세요"></br>
+        <input type = "text" name = "placeCity" placeholder = "시/도">
+        <input type = "text" name = "placeDistrict" placeholder = "시/군/구"></br>
+        <input type = "text" name = "placeStreet" placeholder = "도로명">
+        <input type = "text" name = "placeAddress" placeholder = "상세주소">
+        <input type = "submit" value="등록하기">
+    </form>
+</body>
+</html>

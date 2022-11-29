@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>코스 검색하기</title>
+</head>
+<body>
+    <form action = "{% url "courseSearchbyKey" %}" method = "POST">
+        {% csrf_token %}
+        <h3>코스 검색 페이지입니다.</h3>
+        <h4>검색할 내용을 입력하세요</h4>
+        <input type = "text" name = "searchKey" placeholder="검색어를 입력하세요.">
+        <input type = "submit" value = "검색">
+    </form>
+    {% if key != 'NULL'%}
+    <h4>카테고리 이름에 {{key}}(이)가 포함된 장소가 속한 코스 목록</h4>
+    {% for rows in list %}
+    CourseID: {{ rows.0 }}, CourseName: {{ rows.1 }} <input type = "submit" name = "{{rows.0}}" value = "상세보기"> <br/>
+    {% endfor %}
+    <h4>이름에 {{key}}(이)가 포함된 코스 목록</h4>
+    {% for rows in list2 %}
+    CourseID: {{ rows.0 }}, CourseName: {{ rows.1 }} <input type = "submit" name = "{{rows.0}}" value = "상세보기"> <br/>
+    {% endfor %}
+    {% endif %}
+</body>
+</html>

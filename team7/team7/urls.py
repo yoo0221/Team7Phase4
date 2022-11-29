@@ -20,4 +20,13 @@ from main import views as mainview
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', mainview.index, name='index'),
+    path('searchCourse/', mainview.courseSearch, name='courseSearch'),
+    path('courseDetail/', mainview.courseDetail, name='courseDeatil'),
+    path('placeDetail/', mainview.placeDetail, name='placeDetail'),
+    path('placeRegist/', mainview.placeRegist, name='placeRegist'),
+    path('courseRegist/', mainview.courseRegist, name='courseRegist'),
+    path('placeRegSubmit/', mainview.placeRegSubmit, name='placeRegSubmit'),
+    path('courseRegSubmit/', mainview.courseRegSubmit, name='courseRegSubmit'),
+    path('courseSearchbyKey/',mainview.courseSearchbyKey, name='courseSearchbyKey'),
+    path('registComplete/',mainview.registComplete, name='registComplete'),
 ]
