@@ -10,14 +10,34 @@
     <h2>메인 페이지 입니다</h2>
     <a href={% url 'courseSearch' %} style = "font-size: 20px;"> 코스 검색하기</a>
     <h3>추천 코스 목록</h3>
-    {% for rows in list %}
-    CourseID: {{ rows.0 }}, CourseName: {{ rows.1 }} <input type = "submit" name = "{{rows.0}}" value = "상세보기"> <br/>
-    {% endfor %}
+    <table border = "1">
+        <th>순번</th>
+        <th>코스 이름</th>
+        <th>상세보기</th>
+        {% for rows in list %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{rows.1}}</td>
+            <td><a href="{% url 'courseDetail' rows.0 %}"><button>상세보기</button></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    
     <h3></h3>
     <h3>일기장 미리보기</h3>
-    {% for rows in list2 %}
-    일기 내용: {{ rows.0 }}, 작성일시: {{ rows.1 }}<br/>
-    {% endfor %}
+    <table border = "1">
+        <th>순번</th>
+        <th>일기 내용</th>
+        <th>작성 일시</th>
+        {% for rows in list2 %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{rows.0}}</td>
+            <td>{{rows.1}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
     <h3></h3>
     <a href={% url 'placeRegist' %} style = "font-size: 20px;"> 장소 등록하기</a></br>
     <a href={% url 'courseRegist' %} style = "font-size: 20px;"> 코스 등록하기</a>

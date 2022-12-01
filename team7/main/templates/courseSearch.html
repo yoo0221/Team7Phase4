@@ -16,13 +16,39 @@
     </form>
     {% if key != 'NULL'%}
     <h4>카테고리 이름에 {{key}}(이)가 포함된 장소가 속한 코스 목록</h4>
-    {% for rows in list %}
-    CourseID: {{ rows.0 }}, CourseName: {{ rows.1 }} <input type = "submit" name = "{{rows.0}}" value = "상세보기"> <br/>
-    {% endfor %}
+    <table border = "1">
+        <th>순번</th>
+        <th>CourseID</th>
+        <th>코스 이름</th>
+        <th>바로 가기</th>
+        {% for rows in list %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{rows.0}}</td>
+            <td>{{rows.1}}</td>
+            <td><a href="{% url 'courseDetail' rows.0 %}"><button>상세보기</button></a> </td>
+        </tr>
+        {% endfor %}
+    </table>
     <h4>이름에 {{key}}(이)가 포함된 코스 목록</h4>
-    {% for rows in list2 %}
-    CourseID: {{ rows.0 }}, CourseName: {{ rows.1 }} <input type = "submit" name = "{{rows.0}}" value = "상세보기"> <br/>
-    {% endfor %}
+    <table border = "1">
+        <th>순번</th>
+        <th>CourseID</th>
+        <th>코스 이름</th>
+        <th>바로 가기</th>
+        {% for rows in list2 %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{rows.0}}</td>
+            <td>{{rows.1}}</td>
+            <td><a href="{% url 'courseDetail' rows.0 %}"><button>상세보기</button></a> </td>
+        </tr>
+        {% endfor %}
+    </table>
     {% endif %}
+    <form action = "{% url "index" %}" method = "POST">
+        {% csrf_token %}
+        <input type = "submit" value="홈으로">
+    </form>
 </body>
 </html>

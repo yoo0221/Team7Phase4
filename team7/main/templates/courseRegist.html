@@ -12,13 +12,21 @@
         <h3>코스 등록 페이지입니다.</h3>
         <input type = "text" name = "courseName" placeholder = "코스 이름을 입력하세요">
         <!-- 코스에 장소 등록을 어떻게? -->
-        {% for rows in list%}
-        <div>
-            <input type="checkbox" name = "places[]" id = "{{rows.0}}" value = "{{rows.0}}">
-            <label for = "{{rows.0}}">place name : {{rows.1}} location : {{rows.2}} {{rows.3}} {{rows.4}} {{rows.5}}</label>
-        </div>
-        {% endfor %}
-        <label for="placeName"></label>
+        <table border = "1">
+            <th>체크</th>
+            <th>장소명</th>
+            <th>주소</th>
+            {% for rows in list%}
+            <tr>
+                <div>
+                    <td><input type="checkbox" name = "places[]" id = "{{rows.0}}" value = "{{rows.0}}"></td>
+                    <td><label for = "{{rows.0}}">{{rows.1}} </label></td>
+                    <td><label for = "{{rows.0}}">{{rows.2}} {{rows.3}} {{rows.4}} {{rows.5}}</label></td>
+                </div>
+            </tr>
+            {% endfor %}
+        <!-- <label for="placeName"></label> -->
+        </table>
         <button type = "submit">등록하기</button>
     </form>
 </body>

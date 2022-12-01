@@ -4,32 +4,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>코스 디테일</title>
+    <title>장소 상세</title>
 </head>
 <body>
-    <h3>{{coursename}} 코스의 디테일 페이지 입니다</h3>
-    <h4>코스에 속한 장소들</h4>
-    <table border = "1">
-        <th>순번</th>
-        <th>이름</th>
-        <th>주소</th>
-        <th>바로가기</th>
-        {% for rows in list1 %}
-        <tr>
-            <td>{{forloop.counter}}</td>
-            <td>{{rows.1}}</td>
-            <td>{{rows.2}} {{rows.3}} {{rows.4}} {{rows.5}}</td>
-            <td><a href="{% url 'placeDetail' rows.6 %}"><button>상세보기</button></a></td>
-        </tr>
+    {%for rows in list1%}
+        <h3>{{rows.0}}에 대한 상세 페이지입니다.</h3>
+        <h4>주소 정보</h4>
+        <h5>{{rows.1}} {{rows.2}} {{rows.3}} {{rows.4}}</h5>
+        <h4>카테고리</h4>
+        {%for rows2 in list2%}
+            {{rows2.0}} 
         {% endfor %}
-    </table>
-    <h4>코스의 댓글</h4>
+    {% endfor %}
+    <h3>등록된 댓글들</h3>
     <table border = "1">
         <th>순번</th>
         <th>내용</th>
         <th>작성자</th>
         <th>작성일시</th>
-        {% for rows in list2 %}
+        {% for rows in list3 %}
         <tr>
             <td>{{forloop.counter}}</td>
             <td>{{rows.0}}</td>
@@ -37,7 +30,6 @@
             <td>{{rows.2}}</td>
         </tr>
         {% endfor %}
-        
     </table>
     <form action = "{% url "index" %}" method = "POST">
         {% csrf_token %}
