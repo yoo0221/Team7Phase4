@@ -105,3 +105,6 @@ def courseSearchbyKey(request):
     for rows in cursor:
         list2.append(rows) 
     return render(request,'courseSearch.html',{'key':key, 'list':list,'list2':list2})
+
+def test(request):
+    return render(request, 'bootstraptest.html')

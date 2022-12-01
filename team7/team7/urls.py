@@ -29,4 +29,10 @@ urlpatterns = [
     path('courseRegSubmit/', mainview.courseRegSubmit, name='courseRegSubmit'),
     path('courseSearchbyKey/',mainview.courseSearchbyKey, name='courseSearchbyKey'),
     path('registComplete/',mainview.registComplete, name='registComplete'),
+    path('test/', mainview.test, name='test'),
 ]
+
+# from django.conf.urls.static import static
+# from django.conf import settings
+
+# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
