@@ -141,7 +141,7 @@ def courseCommentRegist(request,courseid):
     #'2021-01-01 19:18:45
     created_time = time.strftime('%Y-%m-%d')+" "+time.strftime('%X')
     #created_time = str(time[0])+'-'+str(time[1])+'-'+str(time[2])+' '+str(time[3])+':'+str(time[4])+':'+str(time[5])
-    query = ("insert into course_comment values ("+ str(max_commentid+1) +","
+    query = ("insert into course_comment values ("+ str(max_commentid+1)+","
             + comment+","+maker_id+","+ "to_date('"+created_time+"', 'yyyy-mm-dd hh24:mi:ss'),"+courseid+")")
     cursor.execute(query)
     connect.commit()
