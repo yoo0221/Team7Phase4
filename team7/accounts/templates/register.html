@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -21,12 +22,16 @@
           비밀번호:
         </label>
         <input type="password" name="password" id="password">
+        <label for="password">
+          비밀번호 확인:
+        </label>
+        <input type="password-check" name="password-check" id="password-check">
       </div>
       <div>
         <label>이름:
         </label>
-        <input type="text" name="first_name" id="first_name" placeholder="ex) 길동">
-        <input type="text" name="last_name" id="last_name" placeholder="ex) 홍">
+        <input type="text" name="first-name" id="first-name" placeholder="ex) 길동">
+        <input type="text" name="last-name" id="last-name" placeholder="ex) 홍">
       </div>
       <div>
         <label for="sex">성별:
@@ -36,8 +41,27 @@
           <option value="F">여</option>
         </select>
       </div>
+      <div>
+        <label for="is-invited">커플코드 입력하기</label>
+        <input type="checkbox" name="is-invited" id="is-invited" value="1" checked="checked" onclick='code_toggle()'>
+        <div id='code-or-create'>
+          <label for="couple-id" id>코드:
+          </label>
+          <input type="text" id='couple-id' name='couple-id'>
+        </div>
+      </div>
       <input type="submit">
     </form>
+    <script>
+      function code_toggle() {
+        const div = document.getElementById("code-or-create");
+        if ($('input:checkbox[id="is-invited"]').is(":checked")) {
+          div.style.display = 'block';
+        } else {
+          div.style.display = 'none';
+        }
+      }
+    </script>
   </body>
 
 </html>
