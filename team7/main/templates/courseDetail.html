@@ -39,6 +39,12 @@
         {% endfor %}
         
     </table>
+    <h4>댓글 작성하기</h4>
+    <form action = {%url 'courseCommentRegist' courseid %} method="post">
+        {% csrf_token %}
+        <input type = "text", name = "comment_txt", placeholder = "댓글을 입력하세요">
+        <input type = "submit", value = "등록">
+    </form>
     <form action = "{% url "index" %}" method = "POST">
         {% csrf_token %}
         <input type = "submit" value="홈으로">
