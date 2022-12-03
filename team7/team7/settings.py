@@ -75,27 +75,27 @@ WSGI_APPLICATION = 'team7.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'orcl',
-        'USER': 'team7',
-        'PASSWORD': 'comp322',
-        'HOST': 'localhost',
-        'PORT': '1521',
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.oracle',
 #         'NAME': 'orcl',
-#         'USER': 'project',
-#         'PASSWORD': 'project',
+#         'USER': 'team7',
+#         'PASSWORD': 'comp322',
 #         'HOST': 'localhost',
 #         'PORT': '1521',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'orcl',
+        'USER': 'project',
+        'PASSWORD': 'project',
+        'HOST': 'localhost',
+        'PORT': '1521',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
