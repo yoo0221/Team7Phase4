@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from main import models
 import os 
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 os.chdir('C:\\oracle\\instantclient_21_7') 
 os.putenv('NLS_LANG', 'AMERICAN_AMERICA.UTF8')
@@ -11,6 +12,7 @@ connect  = ora.connect('team7','comp322','localhost:1521/orcl')
 cursor = connect.cursor()
 
 # Create your views here.
+@login_required
 def index(request):
     courseQuery = ("select C.courseID, C.name from course C where C.courseID <= 5")
     cursor.execute(courseQuery)
@@ -28,12 +30,14 @@ def index(request):
             count += 1
     return render(request, 'index.html', {'list':list,'list2':list2})
 
+@login_required
 def courseSearch(request):
     list = []
     list2 = []
     key = 'NULL'
     return render(request, 'courseSearch.html', {'key':key, 'list':list,'list2':list2})
 
+@login_required
 def courseDetail(request, courseid):
     query = ("select C.name, P.name,P.location_city,P.location_district,P.location_street, P.location_address, P.placeid, C.courseid" + 
             " from (course C join course_consist CC on C.courseID=CC.courseID)" +
@@ -50,6 +54,7 @@ def courseDetail(request, courseid):
         list2.append(rows)
     return render(request, 'courseDetail.html',{ 'coursename':coursename,'list1':list1,'list2':list2,'courseid':courseid})
 
+@login_required
 def placeDetail(request, placeid):
     query = "select name, location_city,location_district,location_street,location_address from place where placeid = " + str(placeid)
     query2 = "select categoryname from place_in_category where placeid = " + str(placeid)
@@ -69,6 +74,7 @@ def placeDetail(request, placeid):
         list3.append(rows)
     return render(request, 'placeDetail.html',{'list1':list1,'list2':list2,'list3':list3})
 
+@login_required
 def placeRegist(request):
     query = "select * from category"
     cursor.execute(query)
@@ -77,9 +83,11 @@ def placeRegist(request):
         list.append(rows)
     return render(request, 'placeRegist.html',{'list':list})
 
+@login_required
 def registComplete(request):
     return render(request, 'registComplete.html')
 
+@login_required
 def courseRegist(request):
     query = "select placeid, name, location_city, location_district, location_street, location_address from place"
     cursor.execute(query)
@@ -88,6 +96,7 @@ def courseRegist(request):
         list.append(rows)
     return render(request, 'courseRegist.html',{'list':list})
 
+@login_required
 def placeRegSubmit(request):
     connect.begin()
     placeName = request.POST['placeName']
@@ -112,6 +121,7 @@ def placeRegSubmit(request):
     connect.commit()
     return redirect('registComplete')
 
+@login_required
 def courseRegSubmit(request):
     courseName = request.POST['courseName']
     placeList = request.POST.getlist('places[]')
@@ -130,6 +140,7 @@ def courseRegSubmit(request):
     connect.commit()
     return redirect('registComplete')
 
+@login_required
 def courseCommentRegist(request,courseid):
     comment = request.POST['comment_txt']
     query = "select max(commentid) from course_comment"
@@ -161,9 +172,11 @@ def courseCommentRegist(request,courseid):
     return render(request, 'courseDetail.html',{ 'coursename':coursename,'list1':list1,'list2':list2,'courseid':courseid})
 
 
+@login_required
 def placeCommentRegist(request, placeid):
     return redirect('placeDetail')
 
+@login_required
 def courseSearchbyKey(request):
     key = request.POST['searchKey']
     list = []
@@ -181,5 +194,6 @@ def courseSearchbyKey(request):
         list2.append(rows) 
     return render(request,'courseSearch.html',{'key':key, 'list':list,'list2':list2})
 
+@login_required
 def test(request):
     return render(request, 'bootstraptest.html')

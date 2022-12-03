@@ -4,6 +4,9 @@ import random
 import os 
 from django.utils import timezone
 from datetime import datetime
+from django.contrib import auth
+from django.contrib.auth.models import User
+
 os.chdir('C:\\oracle\\instantclient_21_7') 
 os.putenv('NLS_LANG', 'AMERICAN_AMERICA.UTF8')
 
@@ -28,10 +31,14 @@ def login(request):
         # 2) password check
         for user in cursor:
             if user[0] == password:
-                return redirect('index')
-            #need django auth
-        else:
-            return redirect('login')
+                user = auth.authenticate(
+                    request, username=id, password=password
+                )
+                if user is not None:
+                    auth.login(request, user)
+                    return redirect('index')
+                else:
+                    return render(request, 'login.html', {'error':'아이디 또는 비밀번호가 올바르지 않습니다.'})
     else:
         return render(request, 'login.html')
 
@@ -98,4 +105,14 @@ def create_user(request):
     cursor.execute(insert_user_query)
     connect.commit()
 
+    user = User.objects.create_user(
+        username=id,
+        password=password
+    )
+    auth.login(request, user)
+
     return redirect('index')
+
+def logout(request):
+    auth.logout(request)
+    return redirect('login')
