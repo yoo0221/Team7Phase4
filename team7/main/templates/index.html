@@ -23,6 +23,10 @@
       코스 검색하기</a> {% endcomment %}
     <h5>추천 코스</h5>
     <div data-bs-spy='scroll' data-bs-root-margin='0px 0px -40%' data-bs-smooth-scroll='true' class='scrollspy-example bg-light p-3 rounded-2 mb-3' tabindex='0'>
+      <div class='d-flex'>
+      <div class='fill-flex text-center'>순차</div>
+      <div class='flex-grow-1 text-center'>코스명</div>
+    </div>
       {% for rows in list %}
       <div class='card' style='width: 100%;'>
         <div class='card-body d-flex'>
@@ -58,7 +62,7 @@
         <div class='card-body d-flex'>
           <div class='flex-fill text-center'>{{ forloop.counter }}</div> 
           <div class='flex-fill text-center'>{{ rows.0 }}</div> 
-          <div class='flex-fill text-center'>{{ rows.1 }}</div> 
+          <div class='flex-fill text-center'>{{ rows.1|date:"Y/m/d(D) h:i:s" }}</div> 
         </div>
       </div>
       {% endfor %}
