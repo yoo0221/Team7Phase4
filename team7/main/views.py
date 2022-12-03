@@ -28,7 +28,13 @@ def index(request):
         if count <5:
             list2.append(rows)
             count += 1
-    return render(request, 'index.html', {'list':list,'list2':list2})
+    # get couple_name on current user
+    query = "select couple_name from couple C join users U on U.coupleID=C.coupleID where U.username='"+ str(request.user) +"'"
+    couple_name = ''
+    cursor.execute(query)
+    for rows in cursor:
+        couple_name = rows[0]
+    return render(request, 'index.html', {'list':list,'list2':list2,'couplename':couple_name})
 
 @login_required
 def courseSearch(request):

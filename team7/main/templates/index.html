@@ -12,12 +12,6 @@
 
   <body> {% endcomment %}
     {% block content %}
-    {% if user.is_authenticated %}
-    <div class='d-flex my-3'>
-      <span>환영합니다, {{user.username}}님</span>
-      <a class='ms-auto' href="{% url 'logout' %}">logout</a>
-    </div>
-    {% endif %}
     {% comment %} <h2>메인 페이지 입니다</h2> {% endcomment %}
     {% comment %} <a href={% url 'courseSearch' %} style="font-size: 20px;">
       코스 검색하기</a> {% endcomment %}
