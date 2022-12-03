@@ -1,18 +1,42 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Team7 - Phase4</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <script src="{% static 'js/bootstrap.bundle.js'%}"></script>
-</head>
-<body>
-    {% block content %}
+  </head>
 
-    {% endblock %}
+  <body>
+    <nav class='navbar navbar-expand-lg bg-light'>
+      <div class='container-fluid'>
+        <a class='navbar-brand' href="{% url 'index' %}">홈</a>
+        <button class='navbar-toggler' type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'>
+          <span class='navbar-toggler-icon'></span>
+        </button>
+        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
+          <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
+            <li class='nav-item'>
+              <a class='nav-link' href="{% url 'placeRegist' %}">장소 등록</a>
+            </li>
+            <li class='nav-item'>
+              <a class='nav-link' href="{% url 'courseRegist' %}">코스 등록</a>
+            </li>
+          </ul>
+          <a class='d-flex text-decoration-none' href="{% url 'courseSearch' %}">
+            <input class="form-control me-2" type="search" placeholder='코스 검색' aria-label="Search">
+          </a>
+        </div>
+      </button>
+    </div>
+  </nav>
+  <div class='container'>
+    {% block content %}{% endblock %}
+  </div>
 </body>
-</html>
 
+</html>
