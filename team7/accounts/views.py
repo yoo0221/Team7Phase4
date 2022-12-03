@@ -3,7 +3,7 @@ import string
 import random
 import os 
 from django.utils import timezone
-
+from datetime import datetime
 os.chdir('C:\\oracle\\instantclient_21_7') 
 os.putenv('NLS_LANG', 'AMERICAN_AMERICA.UTF8')
 
@@ -15,6 +15,9 @@ cursor = connect.cursor()
 def register(request):
     return render(request, 'register.html')
 
+def shop_register(request):
+    return render(request, 'shopRegister.html')
+
 def login(request):
     if request.method == 'POST':
         id = request.POST['username']
@@ -23,11 +26,12 @@ def login(request):
         user_query = ("select password from users where username='"+id+"'")
         cursor.execute(user_query)
         # 2) password check
-        if cursor[0][0] == password:
-            pass
+        for user in cursor:
+            if user[0] == password:
+                return redirect('index')
             #need django auth
         else:
-            redirect('login')
+            return redirect('login')
     else:
         return render(request, 'login.html')
 
@@ -45,6 +49,7 @@ def create_user(request):
     last_name = request.POST['last-name']
     sex = request.POST['sex']
     is_code = request.POST['is-invited']
+    start_date = request.POST['start-date']
     code = ''
     # 1) id redundant check
     users_query = ("select username from users")
@@ -61,7 +66,7 @@ def create_user(request):
     if (int(is_code) == 1) :
         code = request.POST['couple-id']
     else :
-        couples_query = ("select coupleID from couple")
+        couples_query = ("select couple_name from couple")
         cursor.execute(couples_query)
         flag = 1
         while(flag):
@@ -70,8 +75,26 @@ def create_user(request):
             for couples in cursor:
                 if couples[0] == code :
                     flag = 1
+        # couple creating
+        couple_id_query = ("select max(coupleID) from couple")
+        cursor.execute(couple_id_query)
+        couple_id = 0
+        for ids in cursor:
+            couple_id = ids[0] + 1
+        aware = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+        s_date = aware.strftime('%Y-%m-%d')
+        couple_insert_query = ("insert into couple values('"+str(couple_id)+"', '"+ code +"', to_date('"+ s_date +"', 'yyyy-mm-dd'))")
+        cursor.execute(couple_insert_query)
+        connect.commit()
+
     # insert to users table
-    insert_user_query = ("insert into users values ('"+id+"', '"+password+"', '"+ first_name +"', '"+ last_name +"', '"+sex+"', '"+ code +"' )")
+    # get coupleID
+    get_coupleid_query = ("select coupleID from couple where couple_name='"+ code +"'")
+    cursor.execute(get_coupleid_query)
+    couple_id = 0
+    for ids in cursor:
+        couple_id = ids[0]
+    insert_user_query = ("insert into users values ('"+id+"', '"+password+"', '"+ first_name +"', '"+ last_name +"', '"+sex+"', '"+ str(couple_id) +"' )")
     cursor.execute(insert_user_query)
     connect.commit()
 

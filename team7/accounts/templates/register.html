@@ -11,6 +11,7 @@
 
   <body>
     <form action="{% url 'create_user' %}" method="post">
+      {% csrf_token %}
       <div>
         <label for="username">
           아이디:
@@ -25,7 +26,7 @@
         <label for="password">
           비밀번호 확인:
         </label>
-        <input type="password-check" name="password-check" id="password-check">
+        <input type="password" name="password-check" id="password-check">
       </div>
       <div>
         <label>이름:
@@ -42,26 +43,39 @@
         </select>
       </div>
       <div>
-        <label for="is-invited">커플코드 입력하기</label>
-        <input type="checkbox" name="is-invited" id="is-invited" value="1" checked="checked" onclick='code_toggle()'>
+        <label for="is-invited">
+          이미 커플을 생성했어요
+          <input type="checkbox" id='is-invited-btn' checked="checked" onclick='code_toggle()'>
+        </label>
+        <input type="hidden" name="is-invited" id="is-invited" value="1">
         <div id='code-or-create'>
-          <label for="couple-id" id>코드:
+          <label for="couple-id" id="id">코드:
           </label>
           <input type="text" id='couple-id' name='couple-id'>
         </div>
-      </div>
-      <input type="submit">
-    </form>
-    <script>
-      function code_toggle() {
-        const div = document.getElementById("code-or-create");
-        if ($('input:checkbox[id="is-invited"]').is(":checked")) {
-          div.style.display = 'block';
-        } else {
-          div.style.display = 'none';
+        <div id='new-couple' style='display:none;'>
+          <label for="start-date">1일 날짜:</label>
+          <input type="date" id='start-date' name='start-date'>
+        </div>
+        <input type="submit">
+      </form>
+      <a href="{% url 'shop-register' %}">점포 주인이신가요?</a>
+      <script>
+        function code_toggle() {
+          const div = document.getElementById("code-or-create");
+          const newdiv = document.getElementById("new-couple");
+          const value = document.getElementById("is-invited");
+          if ($('input:checkbox[id="is-invited-btn"]').is(":checked")) {
+            div.style.display = 'block';
+            newdiv.style.display = 'none';
+            value.value = 1;
+          } else {
+            div.style.display = 'none';
+            newdiv.style.display = 'block';
+            value.value = 0;
+          }
         }
-      }
-    </script>
-  </body>
+      </script>
+    </body>
 
-</html>
+  </html>
