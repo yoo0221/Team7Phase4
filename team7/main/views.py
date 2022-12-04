@@ -106,18 +106,32 @@ def courseRegist(request):
 def placeRegSubmit(request):
     connect.begin()
     placeName = request.POST['placeName']
-    placeCity = request.POST['placeCity']
-    placeDistrict = request.POST['placeDistrict']
-    placeStreet = request.POST['placeStreet']
-    placeAddress = request.POST['placeAddress']
+    placeTotalAddress = request.POST['placeTotalAddress']
+    # placeCity = request.POST['placeCity']
+    # placeDistrict = request.POST['placeDistrict']
+    # placeStreet = request.POST['placeStreet']
+    # placeAddress = request.POST['placeAddress']
     categoryList = request.POST.getlist('categories[]')
+    
+    address = placeTotalAddress.split()
+    if len(address) > 5:
+        address.pop(2)
+
+    placeCity, placeDistrict, placeStreet, placeAddress = address
+
     query = "select max(placeid) from place"
     cursor.execute(query)
     for rows in cursor:
         max_placeid = int(rows[0])
-    maker_id = 1
+    
+    get_couple_query = "select coupleID from users where username='"+str(request.user)+"'"
+    maker_id = ''
+    cursor.execute(get_couple_query)
+    for rows in cursor:
+        maker_id = int(rows[0])
+
     query = ("insert into place values("+str(max_placeid+1)+ ",'"+ placeCity +"','"+placeDistrict+"','"+placeStreet +
-            "','"+placeAddress+"',"+str(maker_id)+",NULL, '" +placeName+"')")
+            "','"+placeAddress+"', '"+str(maker_id)+"', NULL, '" +placeName+"')")
     
     cursor.execute(query)
     # print(query)

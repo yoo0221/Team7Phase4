@@ -19,7 +19,19 @@ def register(request):
     return render(request, 'register.html')
 
 def shop_register(request):
-    return render(request, 'shopRegister.html')
+    places_query = "select placeID, location_city, location_district, location_street, location_address, name from place where shopID is NULL"
+    cursor.execute(places_query)
+    places = []
+    for rows in cursor:
+        places.append(rows)
+
+    query = "select * from category"
+    cursor.execute(query)
+    list = []
+    for rows in cursor:
+        list.append(rows)
+
+    return render(request, 'shopRegister.html', {'places':places, 'list':list})
 
 def login(request):
     if request.method == 'POST':
@@ -116,3 +128,17 @@ def create_user(request):
 def logout(request):
     auth.logout(request)
     return redirect('login')
+
+def create_shop(request):
+    shopid=request.POST['shopid']
+    open_time=request.POST['open-time']
+    end_time=request.POST['end-time']
+    holyday=request.POST['holyday']
+    tel=request.POST['tel']
+    placeid=request.POST['place']
+    is_place_regist=request.POST['is-not-exist-place']
+
+    if int(is_place_regist) == 1:
+        #장소 등록
+        pass
+
