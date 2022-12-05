@@ -10,12 +10,16 @@
     <title>코스 등록</title>
   </head>
 
-  <body>
-    <form class='text-center' action="{% url "courseRegSubmit" %}" method="POST">
+  <body class='text-center'>
+    <h3 class='p-3 m-0 bg-info'>코스 등록</h3>
+    <form class='container' action="{% url "courseRegSubmit" %}" method="POST">
       {% csrf_token %}
-      <h3 class='mt-3'>코스 등록</h3>
-      <input class='form-control my-3' type="text" name="courseName" placeholder="코스 이름을 입력하세요">
-      <table border="1">
+      <div class='row'>
+        <div class='col-2 mt-4'>코스명:</div>
+        <input class='col form-control my-3' type="text" name="courseName" placeholder="코스 이름을 입력하세요">
+      </div>
+      <div class='text-start'>코스의 장소 선택</div>
+      <table class='container' border="1">
         <th>체크</th>
         <th>장소명</th>
         <th>주소</th>
@@ -37,7 +41,7 @@
           </tr>
         {% endfor %}
       </table>
-      <button class='btn btn-primary' type="submit">등록하기</button>
+      <button class='btn btn-primary my-3' type="submit">등록하기</button>
     </form>
   </body>
 

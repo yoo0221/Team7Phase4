@@ -21,7 +21,7 @@ cursor = connect.cursor()
 def index(request):
 
     # 댓글 상위 5개의 코스
-    courseQuery = ("select C.courseID, C.name, count(*) from course C join course_comment CC on C.courseID=CC.courseID group by (C.courseID, C.name) order by count(*)")
+    courseQuery = ("select C.courseID, C.name, count(*) from course C join course_comment CC on C.courseID=CC.courseID group by (C.courseID, C.name) order by count(*) desc")
     cursor.execute(courseQuery)
     list = []
     for rows in cursor:
