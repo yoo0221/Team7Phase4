@@ -1,33 +1,44 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <title>코스 등록</title>
-</head>
-<body>
-    <form action = "{% url "courseRegSubmit" %}" method = "POST">
-        {% csrf_token %}
-        <h3>코스 등록 페이지입니다.</h3>
-        <input type = "text" name = "courseName" placeholder = "코스 이름을 입력하세요">
-        <!-- 코스에 장소 등록을 어떻게? -->
-        <table border = "1">
-            <th>체크</th>
-            <th>장소명</th>
-            <th>주소</th>
-            {% for rows in list%}
-            <tr>
-                <div>
-                    <td><input type="checkbox" name = "places[]" id = "{{rows.0}}" value = "{{rows.0}}"></td>
-                    <td><label for = "{{rows.0}}">{{rows.1}} </label></td>
-                    <td><label for = "{{rows.0}}">{{rows.2}} {{rows.3}} {{rows.4}} {{rows.5}}</label></td>
-                </div>
-            </tr>
-            {% endfor %}
-        <!-- <label for="placeName"></label> -->
-        </table>
-        <button type = "submit">등록하기</button>
+  </head>
+
+  <body>
+    <form class='text-center' action="{% url "courseRegSubmit" %}" method="POST">
+      {% csrf_token %}
+      <h3 class='mt-3'>코스 등록</h3>
+      <input class='form-control my-3' type="text" name="courseName" placeholder="코스 이름을 입력하세요">
+      <table border="1">
+        <th>체크</th>
+        <th>장소명</th>
+        <th>주소</th>
+        {% for rows in list%}
+          <tr>
+            <div>
+              <td><input type="checkbox" name="places[]" id="{{rows.0}}" value="{{rows.0}}"></td>
+              <td>
+                <label for="{{rows.0}}">{{rows.1}}
+                </label>
+              </td>
+              <td>
+                <label for="{{rows.0}}">{{rows.2}}
+                  {{rows.3}}
+                  {{rows.4}}
+                  {{rows.5}}</label>
+              </td>
+            </div>
+          </tr>
+        {% endfor %}
+      </table>
+      <button class='btn btn-primary' type="submit">등록하기</button>
     </form>
-</body>
+  </body>
+
 </html>

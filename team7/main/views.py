@@ -17,11 +17,16 @@ cursor = connect.cursor()
 # Create your views here.
 @login_required
 def index(request):
-    courseQuery = ("select C.courseID, C.name from course C where C.courseID <= 5")
+
+    # 댓글 상위 5개의 코스
+    courseQuery = ("select C.courseID, C.name, count(*) from course C join course_comment CC on C.courseID=CC.courseID group by (C.courseID, C.name) order by count(*)")
     cursor.execute(courseQuery)
     list = []
     for rows in cursor:
         list.append(rows)
+        if len(list)==5:
+            break;
+    
     list2 = []
     user_id = str(request.user)
     query = "select d.text, d.created_time from diary d, users u where u.coupleid = d.coupleid and u.username = '"+user_id+"'"
