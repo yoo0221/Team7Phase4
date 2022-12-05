@@ -1,89 +1,47 @@
 {% extends 'base.html' %}
 {% load static %}
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-  </head>
-
-  <body> {% endcomment %}
-    {% block content %}
-    {% comment %} <h2>메인 페이지 입니다</h2> {% endcomment %}
-    {% comment %} <a href={% url 'courseSearch' %} style="font-size: 20px;">
-      코스 검색하기</a> {% endcomment %}
+{% block content %}
+  {% if is_user is 1 %}
     <h5>추천 코스</h5>
     <div data-bs-spy='scroll' data-bs-root-margin='0px 0px -40%' data-bs-smooth-scroll='true' class='scrollspy-example bg-light p-3 rounded-2 mb-3' tabindex='0'>
       <div class='d-flex'>
-      <div class='fill-flex text-center'>순차</div>
-      <div class='flex-grow-1 text-center'>코스명</div>
-    </div>
-      {% for rows in list %}
-      <div class='card' style='width: 100%;'>
-        <div class='card-body d-flex'>
-          <div class='flex-fill text-center'>{{ forloop.counter }}</div> 
-          <div class='flex-fill text-center'>{{ rows.1 }}</div> 
-          <a class='flex-fill d-flex justify-content-center text-decoration-none' href="{% url 'courseDetail' rows.0 %}">
-              <button class='btn btn-info'>상세보기</button>
-          </a>
-        </div>
+        <div class='fill-flex text-center'>순차</div>
+        <div class='flex-grow-1 text-center'>코스명</div>
       </div>
+      {% for rows in list %}
+        <div class='card' style='width: 100%;'>
+          <div class='card-body d-flex'>
+            <div class='flex-fill text-center'>{{ forloop.counter }}</div>
+            <div class='flex-fill text-center'>{{ rows.1 }}</div>
+            <a class='flex-fill d-flex justify-content-center text-decoration-none' href="{% url 'courseDetail' rows.0 %}">
+              <button class='btn btn-info'>상세보기</button>
+            </a>
+          </div>
+        </div>
       {% endfor %}
     </div>
-    {% comment %} <table border="1">
-      <th>순번</th>
-      <th>코스 이름</th>
-      <th>상세보기</th>
-      {% for rows in list %}
-        <tr>
-          <td>{{forloop.counter}}</td>
-          <td>{{rows.1}}</td>
-          <td>
-            <a href="{% url 'courseDetail' rows.0 %}">
-              <button>상세보기</button>
-            </a>
-          </td>
-        </tr>
-      {% endfor %}
-    </table> {% endcomment %}
     <h5>내 다이어리</h5>
     <div data-bs-spy='scroll' data-bs-root-margin='0px 0px -40%' data-bs-smooth-scroll='true' class='scrollspy-example bg-light p-3 rounded-2' tabindex='0'>
       {% for rows in list2 %}
-      <div class='card' style='width: 100%;'>
-        <div class='card-body d-flex'>
-          <div class='flex-fill text-center'>{{ forloop.counter }}</div> 
-          <div class='flex-fill text-center'>{{ rows.0 }}</div> 
-          <div class='flex-fill text-center'>{{ rows.1|date:"Y/m/d(D) h:i:s" }}</div> 
+        <div class='card' style='width: 100%;'>
+          <div class='card-body d-flex'>
+            <div class='flex-fill text-center'>{{ forloop.counter }}</div>
+            <div class='flex-fill text-center'>{{ rows.0 }}</div>
+            <div class='flex-fill text-center'>{{ rows.1|date:"Y/m/d(D) h:i:s" }}</div>
+          </div>
         </div>
-      </div>
       {% endfor %}
     </div>
-{% comment %}     
-    <h3>일기장 미리보기</h3>
-    <table border="1">
-      <th>순번</th>
-      <th>일기 내용</th>
-      <th>작성 일시</th>
-      {% for rows in list2 %}
-        <tr>
-          <td>{{forloop.counter}}</td>
-          <td>{{rows.0}}</td>
-          <td>{{rows.1}}</td>
-        </tr>
-      {% endfor %}
-    </table> {% endcomment %}
-    {% endblock %}
-{% comment %} 
-    <h3></h3>
-    <a href={% url 'placeRegist' %} style="font-size: 20px;">
-      장소 등록하기</a>
-  </br>
-  <a href={% url 'courseRegist' %} style="font-size: 20px;">
-    코스 등록하기</a>
-
-</body>
-
-</html> {% endcomment %}
+  {% else %}
+    <h5>메뉴 목록</h5>
+    {% for rows in list2 %}
+      <div class='card' style='width: 100%;'>
+        <div class='card-body d-flex'>
+          <div class='flex-fill text-center'>{{ forloop.counter }}</div>
+          <div class='flex-fill text-center'>{{ rows.0 }}</div>
+          <div class='flex-fill text-center'>{{ rows.1|date:"Y/m/d(D) h:i:s" }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}

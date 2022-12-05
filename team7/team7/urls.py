@@ -32,6 +32,7 @@ urlpatterns = [
     path('courseSearchbyKey/',mainview.courseSearchbyKey, name='courseSearchbyKey'),
     path('registComplete/',mainview.registComplete, name='registComplete'),
     path('test/', mainview.test, name='test'),
+    path('menuRegist/', mainview.menuRegist, name='menu_regist'),
     path('account/', include('accounts.urls'))
 ]
 

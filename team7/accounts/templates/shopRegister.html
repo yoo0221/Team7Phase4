@@ -8,12 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <title>회원가입</title>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=54f073c60618ff9d945d933552e9ce12"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=54f073c60618ff9d945d933552e9ce12&libraries=services"></script>
     <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
   </head>
 
   <body>
-    <form class='container' action="{% url 'create_user' %}" method="post">
+    <form class='container' action="{% url 'create_shop' %}" method="post">
       <h3 class='text-center mt-3'>회원가입</h3>
       <hr>
       {% csrf_token %}
@@ -37,9 +37,9 @@
         <label class='form-label row'>영업 시간:</label>
         <div class='row'>
           오픈:
-          <input class='form-control col' type="date" id='open-time' name='open-time'>
+          <input class='form-control col' type="time" id='open-time' name='open-time'>
           마감:
-          <input class='form-control col' type="date" id='end-time' name='end-time'>
+          <input class='form-control col' type="time" id='end-time' name='end-time'>
         </div>
       </div>
       <div class='container px-0 mb-3'>
@@ -87,47 +87,145 @@
         <input class='form-check' type="hidden" name="is-not-exist-place" id="is-not-exist-place" value="1">
         <div id='place-regist' class='container mb-3'>
           신규 장소 등록
-          <input type="text" name="placeName" placeholder="장소의 이름을 입력하세요"></br>
-        <input type="text" name="placeCity" placeholder="시/도">
-        <input type="text" name="placeDistrict" placeholder="시/군/구"></br>
-      <input type="text" name="placeStreet" placeholder="도로명">
-      <input type="text" name="placeAddress" placeholder="상세주소">
-      <h4>해당하는 카테고리를 선택하세요.</h4>
-      <table border="1">
-        <th>체크</th>
-        <th>카테고리명</th>
-        {% for rows in list %}
-          <tr>
-            <td><input type="checkbox" name="categories[]" id="{{rows.0}}" value="{{rows.0}}"></td>
-            <td>
-              <label for="{{rows.0}}">{{rows.0}}</label>
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-    <div class='container'>
-      <div class='row'>
-        <input type="submit" value='점포 등록' class='btn btn-info'>
+          <div id='menu-wrap' class="card row" style="width: 18rem;">
+            <div class="card-header">
+              검색:
+              <input type="text" class='form-control' placeholder='주소 또는 점포 이름 입력' id='place-search' size='15'>
+              <button type='button' class='btn btn-info' onclick="searchPlaces(); return false;">검색</button>
+            </div>
+            <ul class="list-group list-group-flush" id="search-places"></ul>
+          </div>
+          <input type="hidden" id="place-name" name="placeName">
+          <input type="hidden" id="place-address" name="placeTotalAddress">
+          <div class='row'>
+            <h4>해당하는 카테고리를 선택하세요.</h4>
+            <table border="1">
+              <th>체크</th>
+              <th>카테고리명</th>
+              {% for rows in list %}
+                <tr>
+                  <td><input type="checkbox" name="categories[]" id="{{rows.0}}" value="{{rows.0}}"></td>
+                  <td>
+                    <label for="{{rows.0}}">{{rows.0}}</label>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+        <div class='container'>
+          <div class='row'>
+            <input type="submit" value='점포 등록' class='btn btn-info'>
+          </div>
+        </div>
+      </form>
+      <div>
+        <a href="{% url 'register' %}">커플 가입을 원하시나요?</a>
       </div>
-    </div>
-  </form>
-  <div>
-    <a href="{% url 'register' %}">커플 가입을 원하시나요?</a>
-  </div>
-  <script>
-    function code_toggle() {
-      const div = document.getElementById("place-regist");
-      const value = document.getElementById("is-not-exist-place");
-      if ($('input:checkbox[id="is-check"]').is(":checked")) {
-        div.style.display = 'block';
-        value.value = 1;
-      } else {
-        div.style.display = 'none';
-        value.value = 0;
-      }
-    }
-  </script>
-</body>
+      <script>
+        function code_toggle() {
+          const div = document.getElementById("place-regist");
+          const value = document.getElementById("is-not-exist-place");
+          if ($('input:checkbox[id="is-check"]').is(":checked")) {
+            div.style.display = 'block';
+            value.value = 1;
+          } else {
+            div.style.display = 'none';
+            value.value = 0;
+          }
+        }
+      </script>
+      <script>
+        var ps = new kakao
+          .maps
+          .services
+          .Places();
 
-</html>
+        function searchPlaces() {
+          var keyword = document
+            .getElementById('place-search')
+            .value;
+
+          if (!keyword.replace(/^\s+|\s+$/g, '')) {
+            return false;
+          }
+
+          ps.keywordSearch(keyword, placesSearchCB);
+        }
+
+        function placesSearchCB(data, status, pagination) {
+          if (status === kakao.maps.services.Status.OK) {
+
+            displayPlaces(data);
+
+          } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+            alert('검색 결과가 존재하지 않습니다.');
+            return;
+
+          } else if (status === kakao.maps.services.Status.ERROR) {
+
+            alert('검색 중 오류가 발생했습니다.');
+            return;
+
+          }
+        }
+
+        function displayPlaces(places) {
+          var listEl = document.getElementById('search-places'),
+            menuEl = document.getElementById('menu_wrap'),
+            fragment = document.createDocumentFragment(),
+            listStr = '';
+
+          removeAllChildNodes(listEl);
+
+          for (var i = 0; i < places.length; i++) {
+            itemEl = getListItem(i, places[i]);
+
+            fragment.appendChild(itemEl);
+          }
+
+          listEl.appendChild(fragment);
+          menuEl.scrollTop = 0;
+        }
+
+        function getListItem(index, places) {
+          var el = document.createElement('li'),
+            itemStr = '<div class="container" id="place' + index + '">' + '   <h5 class="row">' + places.place_name + '</h5>' + '<div class="row"> 주소:';
+
+          if (places.road_address_name) {
+            itemStr += '    <span class="col">' + places.road_address_name + '</span>';
+          } else {
+            itemStr += '    <span class="col">' + places.address_name + '</span>';
+          }
+
+          itemStr += '<input type="radio" name="place" id="place" value="' + index + '" onclick="place_select()">'
+
+          itemStr += '</div>';
+
+          el.innerHTML = itemStr;
+          el.className = 'list-group-item';
+
+          return el;
+        }
+
+        function removeAllChildNodes(el) {
+          while (el.hasChildNodes()) {
+            el.removeChild(el.lastChild);
+          }
+        }
+
+        function place_select() {
+          const selected = $(':input:radio[id="place"]:checked').val();
+          const placename_val = $('#place' + selected + ' > h5').html();
+          const placeaddress_val = $('#place' + selected + ' > div > span').html();
+          const placename = document.getElementById("place-name");
+          const placeaddress = document.getElementById("place-address");
+          console.log(placeaddress_val);
+          placename.value = placename_val;
+          placeaddress.value = placeaddress_val;
+        }
+      </script>
+    </body>
+
+  </html>

@@ -21,38 +21,45 @@
         <button class='navbar-toggler' type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'>
           <span class='navbar-toggler-icon'></span>
         </button>
-        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
-          <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
-            <li class='nav-item'>
-              <a class='nav-link' href="{% url 'placeRegist' %}">장소 등록</a>
-            </li>
-            <li class='nav-item'>
-              <a class='nav-link' href="{% url 'courseRegist' %}">코스 등록</a>
-            </li>
-          </ul>
-          <a class='d-flex text-decoration-none' href="{% url 'courseSearch' %}">
-            <input class="form-control me-2" type="search" placeholder='코스 검색' aria-label="Search">
-          </a>
-        </div>
-      </button>
-    </div>
-  </nav>
-  <div class='container'>
-    {% if user.is_authenticated %}
-      <div class='d-flex my-3'>
-        <a id='couplename' class='text-decoration-none' data-bs-toggle="popover" data-bs-title="커플 코드" data-bs-content='{{couplename}}'>
-          환영합니다,
-          {{user.username}}님
-        </a>
-        <a class='ms-auto' href="{% url 'logout' %}">logout</a>
+        {% if is_user is 1%}
+          <div class='collapse navbar-collapse' id='navbarSupportedContent'>
+            <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
+              <li class='nav-item'>
+                <a class='nav-link' href="{% url 'placeRegist' %}">장소 등록</a>
+              </li>
+              <li class='nav-item'>
+                <a class='nav-link' href="{% url 'courseRegist' %}">코스 등록</a>
+              </li>
+            </ul>
+            <a class='d-flex text-decoration-none' href="{% url 'courseSearch' %}">
+              <input class="form-control me-2" type="search" placeholder='코스 검색' aria-label="Search">
+            </a>
+          </div>
+        {% endif %}
       </div>
-    {% endif %}
-    {% block content %}{% endblock %}
-  </div>
-  <script>
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-  </script>
-</body>
+    </nav>
+    <div class='container'>
+      {% if user.is_authenticated %}
+        <div class='d-flex my-3'>
+          {% if is_user is 1%}
+            <a id='couplename' class='text-decoration-none' data-bs-toggle="popover" data-bs-title="커플 코드" data-bs-content='{{couplename}}'>
+              환영합니다,
+              {{user.username}}님
+            </a>
+          {% else %}
+            <a href='{% url 'menu_regist' %}'>
+              메뉴 등록
+            </a>
+          {% endif %}
+          <a class='ms-auto' href="{% url 'logout' %}">logout</a>
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+    <script>
+      const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+      const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    </script>
+  </body>
 
 </html>
