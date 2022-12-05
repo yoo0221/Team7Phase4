@@ -37,20 +37,38 @@ def login(request):
     if request.method == 'POST':
         id = request.POST['username']
         password = request.POST['password']
+        
         # 1) id check
-        user_query = ("select password from users where username='"+id+"'")
+        pwd = ''
+        is_user = -1
+        user_query = ("select username, password from users where username='"+id+"'")
         cursor.execute(user_query)
+        for users in cursor:
+            if users[0] == id:
+                is_user = 1
+                pwd = users[1]
+        if is_user != 1:
+            shop_query = ("select shopid, password from shop where shopid='"+id+"'")
+            cursor.execute(shop_query)
+            for shops in cursor:
+                if shops[0] == id:
+                    pwd = shops[1]
+                    is_user = 0
+
+        if is_user == -1:
+            return redirect('login')
+
+        
         # 2) password check
-        for user in cursor:
-            if user[0] == password:
-                user = auth.authenticate(
-                    request, username=id, password=password
-                )
-                if user is not None:
-                    auth.login(request, user)
-                    return redirect('index')
-                else:
-                    return render(request, 'login.html', {'error':'아이디 또는 비밀번호가 올바르지 않습니다.'})
+        if pwd == password:
+            user = auth.authenticate(
+                request, username=id, password=password
+            )
+            if user is not None:
+                auth.login(request, user)
+                return redirect('index')
+            else:
+                return render(request, 'login.html', {'error':'아이디 또는 비밀번호가 올바르지 않습니다.'})
     else:
         return render(request, 'login.html')
 
@@ -131,14 +149,90 @@ def logout(request):
 
 def create_shop(request):
     shopid=request.POST['shopid']
+    password=request.POST['password']
+    check=request.POST['password-check']
     open_time=request.POST['open-time']
     end_time=request.POST['end-time']
-    holyday=request.POST['holyday']
+    try:
+        holyday=request.POST['holyday']
+    except:
+        holyday='NULL'
     tel=request.POST['tel']
-    placeid=request.POST['place']
+    placeid=0
     is_place_regist=request.POST['is-not-exist-place']
 
+    # 1) id redundant check
+    users_query = ("select username from users")
+    cursor.execute(users_query)
+    for users in cursor:
+        if users[0] == shopid:
+            return redirect('shop-register')
+
+    # 2) password check
+    if password != check:
+        return redirect('shop-register')
+
+    # 3) time parsing
+    aware = timezone.make_aware(datetime.strptime(open_time, '%H:%M'))
+    o_time = aware.strftime('%H:%M')
+    aware = timezone.make_aware(datetime.strptime(end_time, '%H:%M'))
+    e_time = aware.strftime('%H:%M')
+
     if int(is_place_regist) == 1:
-        #장소 등록
-        pass
+        connect.begin()
+        placeName = request.POST['placeName']
+        placeTotalAddress = request.POST['placeTotalAddress']
+        categoryList = request.POST.getlist('categories[]')
+        
+        address = placeTotalAddress.split()
+        if len(address) > 5:
+            address.pop(2)
+
+        placeCity, placeDistrict, placeStreet, placeAddress = address
+
+        query = "select max(placeid) from place"
+        cursor.execute(query)
+        max_placeid = 0
+        for rows in cursor:
+            max_placeid = int(rows[0])
+        
+        get_couple_query = "select coupleID from users where username='"+str(request.user)+"'"
+        maker_id = ''
+        cursor.execute(get_couple_query)
+        for rows in cursor:
+            maker_id = int(rows[0])
+
+        query = ("insert into place values("+str(max_placeid+1)+ ",'"+ placeCity +"','"+placeDistrict+"','"+placeStreet +
+                "','"+placeAddress+"', '"+str(maker_id)+"','"+ shopid +"' , '" +placeName+"')")
+        
+        cursor.execute(query)
+        # print(query)
+        for category in categoryList:
+            query2 = "insert into place_in_category values('"+category+"',"+str(max_placeid+1)+")"
+            cursor.execute(query2)
+        connect.commit()
+        placeid=max_placeid + 1
+    else:
+        placeid=int(request.POST['place'])
+        # update place
+        place_update_shop = "update place set shopid='"+ shopid +"' where placeid="+placeid
+        cursor.execute(place_update_shop)
+        connect.commit()
+
+    # insert shop
+    if (holyday!='NULL'):
+        shop_query = "insert into shop values('"+ shopid +"', '"+password+"', to_date('"+o_time+"', 'hh24:mi:ss'), to_date('"+e_time+"', 'hh24:mi:ss'), '"+holyday+"', '"+tel+"', "+str(placeid)+")"
+    else:
+        shop_query = "insert into shop values('"+ shopid +"', '"+password+"', to_date('"+o_time+"', 'hh24:mi:ss'), to_date('"+e_time+"', 'hh24:mi:ss'), "+holyday+", '"+tel+"', "+str(placeid)+")"
+    cursor.execute(shop_query)
+    connect.commit()
+
+    user = User.objects.create_user(
+        username=shopid,
+        password=password
+    )
+    auth.login(request, user)
+
+    return redirect('index')
+
 

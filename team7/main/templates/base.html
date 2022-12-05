@@ -40,10 +40,16 @@
   <div class='container'>
     {% if user.is_authenticated %}
       <div class='d-flex my-3'>
-        <a id='couplename' class='text-decoration-none' data-bs-toggle="popover" data-bs-title="커플 코드" data-bs-content='{{couplename}}'>
-          환영합니다,
-          {{user.username}}님
-        </a>
+        {% if is_user is 1%}
+          <a id='couplename' class='text-decoration-none' data-bs-toggle="popover" data-bs-title="커플 코드" data-bs-content='{{couplename}}'>
+            환영합니다,
+            {{user.username}}님
+          </a>
+        {% else %}
+          <a href='{% url 'menu_regist' %}'>
+            메뉴 등록
+          </a>
+        {% endif %}
         <a class='ms-auto' href="{% url 'logout' %}">logout</a>
       </div>
     {% endif %}

@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from main import models
+import string
+import random
 import os 
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
+from django.conf import settings
 os.chdir('C:\\oracle\\instantclient_21_7') 
 os.putenv('NLS_LANG', 'AMERICAN_AMERICA.UTF8')
 
@@ -20,7 +22,7 @@ def index(request):
     for rows in cursor:
         list.append(rows)
     list2 = []
-    user_id = "user1"
+    user_id = str(request.user)
     query = "select d.text, d.created_time from diary d, users u where u.coupleid = d.coupleid and u.username = '"+user_id+"'"
     cursor.execute(query) 
     count = 0
@@ -29,12 +31,25 @@ def index(request):
             list2.append(rows)
             count += 1
     # get couple_name on current user
-    query = "select couple_name from couple C join users U on U.coupleID=C.coupleID where U.username='"+ str(request.user) +"'"
+    query = "select couple_name from couple C join users U on U.coupleID=C.coupleID where U.username='"+ user_id +"'"
     couple_name = ''
     cursor.execute(query)
     for rows in cursor:
         couple_name = rows[0]
-    return render(request, 'index.html', {'list':list,'list2':list2,'couplename':couple_name})
+
+    # couple user / shop user
+    query = "select username from users where username='"+ user_id +"'"
+    is_user = -1
+    cursor.execute(query)
+    for rows in cursor:
+        is_user = 1
+
+    query = "select shopid from shop where shopid='"+ user_id +"'"
+    cursor.execute(query)
+    for rows in cursor:
+        is_user = 0
+
+    return render(request, 'index.html', {'list':list,'list2':list2,'couplename':couple_name, 'is_user':is_user})
 
 @login_required
 def courseSearch(request):
@@ -216,4 +231,37 @@ def courseSearchbyKey(request):
 
 @login_required
 def test(request):
-    return render(request, 'bootstraptest.html')
+    if request.method=='POST':
+        # handle image
+        files = request.FILES['file']
+        dir_path = os.path.join(settings.BASE_DIR, 'media')
+        img_name = rand_imgname()
+        file_name = dir_path+'/img/'+img_name+'.jpg'
+
+        destination = open(file_name, 'wb+')
+        for chunk in files.chunks():
+            destination.write(chunk)
+        destination.close()
+
+        #insert photo db
+        db_path = '/media/img/'+img_name+'.jpg'
+        query = "insert into photo values(52, 50, '"+db_path+"', NULL)"
+        cursor.execute(query)
+        connect.commit()
+        return redirect('test')
+    else:
+        query = "select filename from photo where placeid=50"
+        cursor.execute(query)
+        imgs = []
+        for rows in cursor:
+            imgs.append(rows)
+        return render(request, 'bootstraptest.html', {'imgs':imgs})
+
+def rand_imgname():
+    letters_set = string.ascii_lowercase
+    random_list = random.sample(letters_set, 10)
+    result = ''.join(random_list)
+    return result
+
+def menuRegist(request):
+    return render(request, 'menuRegist.html')
