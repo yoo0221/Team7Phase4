@@ -31,7 +31,7 @@ def index(request):
 
     list2 = []
     user_id = str(request.user)
-    query = "select d.text, d.created_time from diary d, users u where u.coupleid = d.coupleid and u.username = '"+user_id+"'"
+    query = "select d.text, d.created_time, d.diaryid from diary d, users u where u.coupleid = d.coupleid and u.username = '"+user_id+"'"
     cursor.execute(query) 
     count = 0
     for rows in cursor:
@@ -152,42 +152,67 @@ def courseRegist(request):
         list.append(rows)
     return render(request, 'courseRegist.html',{'list':list})
 
-def diaryDetail(request):
+def diaryDetail(request, diaryid):
+    query = "select coupleid from users where username='"+str(request.user)+"'"
     coupleid = 1
-    query = "select text, created_time from diary where coupleid = "+ str(coupleid)
     cursor.execute(query)
-    print(query)
-    list = []
     for rows in cursor:
-        list.append(rows)
-    return render(request, 'diaryDetail.html',{'list':list})
+        coupleid = int(rows[0])
+
+    query = "select text, filename, created_time from diary where diaryid="+ str(diaryid) +" and coupleid = "+ str(coupleid)
+    cursor.execute(query)
+    diary = []
+    for rows in cursor:
+        for col in rows:
+            diary.append(col)
+    return render(request, 'diaryDetail.html',{'diary':diary})
 
 def diaryWrite(request):
     return render(request, 'diaryWrite.html')
 
 def diarySubmit(request):
     text = request.POST['diaryText']
+    try:
+        diaryimg = request.FILES['diary-img']
+        # 이미지 처리
+        dir_path = os.path.join(settings.BASE_DIR, 'media')
+        img_name = rand_imgname()
+        file_name = dir_path+'/img/'+img_name+'.jpg'
+
+        destination = open(file_name, 'wb+')
+        for chunk in diaryimg.chunks():
+            destination.write(chunk)
+        destination.close()
+        db_path = '/media/img/'+img_name+'.jpg'
+    except:
+        db_path = 'NULL'
+    
+    query = "select coupleid from users where username='"+str(request.user)+"'"
     maker_coupleid = 1
+    cursor.execute(query)
+    for rows in cursor:
+        maker_coupleid = int(rows[0])
+
     query = "select max(diaryid) from diary"
     cursor.execute(query)
     for rows in cursor:
         max_dirayid = int(rows[0])
+
     time = timezone.localtime()
     created_time = time.strftime('%Y-%m-%d')+" "+time.strftime('%X')
 
-    query = ("insert into diary values (" +str(max_dirayid +1) + ",'" + text +
-            "',NULL, to_date('"+ created_time+ "', "+"'yyyy-mm-dd hh24:mi:ss')," + str(maker_coupleid)+
-            ")")
+    if db_path != 'NULL':
+        query = ("insert into diary values (" +str(max_dirayid +1) + ",'" + text +
+                "','"+db_path+"', to_date('"+ created_time+ "', "+"'yyyy-mm-dd hh24:mi:ss')," + str(maker_coupleid)+
+                ")")
+    else:
+        query = ("insert into diary values (" +str(max_dirayid +1) + ",'" + text +
+                "',NULL, to_date('"+ created_time+ "', "+"'yyyy-mm-dd hh24:mi:ss')," + str(maker_coupleid)+
+                ")")
     cursor.execute(query)
     connect.commit()
-    coupleid = maker_coupleid
-    query = "select text, created_time from diary where coupleid = "+ str(coupleid)
-    cursor.execute(query)
-    print(query)
-    list = []
-    for rows in cursor:
-        list.append(rows)
-    return render(request, 'diaryDetail.html',{'list':list})
+
+    return redirect('diaryDetail', diaryid=max_dirayid+1)
 
 @login_required
 def placeRegSubmit(request):

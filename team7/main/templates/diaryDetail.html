@@ -1,32 +1,32 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <title>일기 상세</title>
-</head>
-<body>
-    <h3>전체 일기 보기</h3>
-    <table border = "1">
-        <th>순번</th>
-        <th>일기 내용</th>
-        <th>작성 일시</th>
-        {% for rows in list %}
-        <tr>
-            <td>{{forloop.counter}}</td>
-            <td>{{rows.0}}</td>
-            <td>{{rows.1}}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    <form action = "{% url "diaryWrite" %}" method = "POST">
-        {% csrf_token %}
-        <input type = "submit" value="일기 작성하기">
-    </form>
-    <form action = "{% url "index" %}" method = "POST">
-        {% csrf_token %}
-        <input type = "submit" value="홈으로">
-    </form>
-</body>
+  </head>
+
+  <body class='text-center'>
+
+    <h3 class='p-3 m-0 bg-info'>일기</h3>
+    <div class='container'>
+      <div class="card my-1" style="">
+        <img src="{{diary.1}}" class="card-img-top" alt="" height="100%">
+        <div class="card-body">
+          <h5 class="card-title">{{diary.0}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">
+            {{ diary.2 | date:"Y/m/d(D) h:i:s" }}
+          </h6>
+        </div>
+      </div>
+      <a href="{% url 'index' %}">
+        <button class='my-3 btn btn-primary'>홈으로</button>
+      </a>
+    </div>
+  </body>
+
 </html>

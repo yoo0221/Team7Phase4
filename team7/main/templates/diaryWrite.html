@@ -1,18 +1,30 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <title>일기 등록</title>
-</head>
-<body>
-    <h3>일기 작성 페이지입니다.</h3>
-    <h5>일기내용</h5>
-    <form action = "{% url "diarySubmit" %}" method = "POST">
-        {% csrf_token %}
-        <textarea name ="diaryText" placeholder="내용을 입력하세요."></textarea>
-        <input type = "submit" value="일기 작성하기">
+  </head>
+
+  <body class='text-center'>
+    <h5 class='p-3 m-0 bg-info'>일기 작성</h5>
+
+    <form class='container' action="{% url "diarySubmit" %}" method="POST" enctype='multipart/form-data'>
+      {% csrf_token %}
+      <div class='row my-2'>
+        <span class='col-2 mt-2'>한 줄 쓰기</span>
+        <input class='col form-control' type='text' id='diaryText' name="diaryText" placeholder="한 줄 일기를 작성하세요">
+      </div>
+      <div class='row my-2'>
+        <span class='col-2 mt-2'>사진 등록</span>
+        <input class='col form-control' type="file" id='diary-img' name='diary-img'>
+      </div>
+      <input type="submit" value="작성">
     </form>
-</body>
+  </body>
+
 </html>
