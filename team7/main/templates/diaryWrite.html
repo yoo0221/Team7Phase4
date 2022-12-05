@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일기 등록</title>
+</head>
+<body>
+    <h3>일기 작성 페이지입니다.</h3>
+    <h5>일기내용</h5>
+    <form action = "{% url "diarySubmit" %}" method = "POST">
+        {% csrf_token %}
+        <textarea name ="diaryText" placeholder="내용을 입력하세요."></textarea>
+        <input type = "submit" value="일기 작성하기">
+    </form>
+</body>
+</html>

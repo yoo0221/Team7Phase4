@@ -128,6 +128,43 @@ def courseRegist(request):
         list.append(rows)
     return render(request, 'courseRegist.html',{'list':list})
 
+def diaryDetail(request):
+    coupleid = 1
+    query = "select text, created_time from diary where coupleid = "+ str(coupleid)
+    cursor.execute(query)
+    print(query)
+    list = []
+    for rows in cursor:
+        list.append(rows)
+    return render(request, 'diaryDetail.html',{'list':list})
+
+def diaryWrite(request):
+    return render(request, 'diaryWrite.html')
+
+def diarySubmit(request):
+    text = request.POST['diaryText']
+    maker_coupleid = 1
+    query = "select max(diaryid) from diary"
+    cursor.execute(query)
+    for rows in cursor:
+        max_dirayid = int(rows[0])
+    time = timezone.localtime()
+    created_time = time.strftime('%Y-%m-%d')+" "+time.strftime('%X')
+
+    query = ("insert into diary values (" +str(max_dirayid +1) + ",'" + text +
+            "',NULL, to_date('"+ created_time+ "', "+"'yyyy-mm-dd hh24:mi:ss')," + str(maker_coupleid)+
+            ")")
+    cursor.execute(query)
+    connect.commit()
+    coupleid = maker_coupleid
+    query = "select text, created_time from diary where coupleid = "+ str(coupleid)
+    cursor.execute(query)
+    print(query)
+    list = []
+    for rows in cursor:
+        list.append(rows)
+    return render(request, 'diaryDetail.html',{'list':list})
+
 @login_required
 def placeRegSubmit(request):
     connect.begin()

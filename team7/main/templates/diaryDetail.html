@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일기 상세</title>
+</head>
+<body>
+    <h3>전체 일기 보기</h3>
+    <table border = "1">
+        <th>순번</th>
+        <th>일기 내용</th>
+        <th>작성 일시</th>
+        {% for rows in list %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{rows.0}}</td>
+            <td>{{rows.1}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <form action = "{% url "diaryWrite" %}" method = "POST">
+        {% csrf_token %}
+        <input type = "submit" value="일기 작성하기">
+    </form>
+    <form action = "{% url "index" %}" method = "POST">
+        {% csrf_token %}
+        <input type = "submit" value="홈으로">
+    </form>
+</body>
+</html>
