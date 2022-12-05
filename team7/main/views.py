@@ -26,7 +26,7 @@ def index(request):
         list.append(rows)
         if len(list)==5:
             break;
-    
+
     list2 = []
     user_id = str(request.user)
     query = "select d.text, d.created_time from diary d, users u where u.coupleid = d.coupleid and u.username = '"+user_id+"'"
@@ -86,23 +86,47 @@ def courseDetail(request, courseid):
 
 @login_required
 def placeDetail(request, placeid):
-    query = "select name, location_city,location_district,location_street,location_address from place where placeid = " + str(placeid)
+    query = "select name, location_city,location_district,location_street,location_address, shopid from place where placeid = " + str(placeid)
     query2 = "select categoryname from place_in_category where placeid = " + str(placeid)
+    query3 = "select text, author, created_time from place_comment where placeid = " + str(placeid) + " order by created_time desc"
 
-    cursor.execute(query)
     list1 = []
     list2 = []
+    list3 = []
+    menus = []
+    tel = ''
+    shopid = ''
+    is_shop = False
+    # 장소 정보
+    cursor.execute(query)
     for rows in cursor:
         list1.append(rows)
+        if rows[5] is not None:
+            is_shop = True
+            shopid = str(rows[5])
+
+    # 속한 카테고리 정보
     cursor.execute(query2)
     for rows in cursor:
         list2.append(rows)
-    query3 = "select text, author, created_time from place_comment where placeid = " + str(placeid)
+    
+    # 댓글 목록
     cursor.execute(query3)
-    list3 = []
     for rows in cursor:
         list3.append(rows)
-    return render(request, 'placeDetail.html',{'list1':list1,'list2':list2,'list3':list3})
+
+    # shop 여부에 따라
+    if is_shop:
+        shop_tel_query = "select tel from shop where shopid='"+shopid+"'"
+        cursor.execute(shop_tel_query)
+        for tele in cursor:
+            tel = tele
+        menu_query = "select name, price, filename from menu where shopid='"+shopid+"'"
+        cursor.execute(menu_query)
+        for menu in cursor:
+            menus.append(menu)
+    
+    return render(request, 'placeDetail.html',{'list1':list1,'list2':list2,'list3':list3, 'placeid':placeid, 'is_shop':is_shop, 'menus':menus, 'tel':tel})
 
 @login_required
 def placeRegist(request):
@@ -218,7 +242,41 @@ def courseCommentRegist(request,courseid):
 
 @login_required
 def placeCommentRegist(request, placeid):
-    return redirect('placeDetail')
+    comment = request.POST['place-comment']
+    query = "select max(commentid) from place_comment"
+    max_commentid = 0
+    cursor.execute(query)
+    for rows in cursor:
+        max_commentid = int(rows[0])
+
+    maker_id = str(request.user)
+    
+    time = timezone.localtime()
+    #'2021-01-01 19:18:45
+    created_time = time.strftime('%Y-%m-%d')+" "+time.strftime('%X')
+    #created_time = str(time[0])+'-'+str(time[1])+'-'+str(time[2])+' '+str(time[3])+':'+str(time[4])+':'+str(time[5])
+    query = ("insert into place_comment values ("+ str(max_commentid+1)+",'"
+            + comment+"','"+maker_id+"',"+ "to_date('"+created_time+"', 'yyyy-mm-dd hh24:mi:ss'),"+str(placeid)+")")
+    cursor.execute(query)
+    connect.commit()
+
+    # query = ("select C.name, P.name,P.location_city,P.location_district,P.location_street, P.location_address, P.placeid, C.courseid" + 
+    #         " from (course C join course_consist CC on C.courseID=CC.courseID)" +
+    #          " join place P on P.placeID=CC.placeID where C.courseID ="+ str(placeid))
+    # cursor.execute(query) 
+    # list1 = []
+
+    # for rows in cursor:
+    #     list1.append(rows)  
+    # coursename = rows[0]
+
+    # query = "select text, author, created_time from course_comment where courseid = " + str(courseid)
+    # cursor.execute(query) 
+    # list2 = []
+    # for rows in cursor:
+    #     list2.append(rows)
+    # return render(request, 'courseDetail.html',{ 'coursename':coursename,'list1':list1,'list2':list2,'courseid':courseid})
+    return redirect('placeDetail', placeid=placeid)
 
 @login_required
 def courseSearchbyKey(request):
@@ -273,4 +331,42 @@ def rand_imgname():
     return result
 
 def menuRegist(request):
-    return render(request, 'menuRegist.html')
+    shopid = str(request.user)
+    if request.method=='POST':
+        try:
+            menuname = request.POST['menu-name']
+            menuprice = request.POST['menu-price']
+        except:
+            return redirect('menuRegist')
+        try:
+            menuimg = request.FILES['menu-img']
+            # 이미지 처리
+            dir_path = os.path.join(settings.BASE_DIR, 'media')
+            img_name = rand_imgname()
+            file_name = dir_path+'/img/'+img_name+'.jpg'
+
+            destination = open(file_name, 'wb+')
+            for chunk in menuimg.chunks():
+                destination.write(chunk)
+            destination.close()
+            db_path = '/media/img/'+img_name+'.jpg'
+        except:
+            db_path = 'NULL'
+
+        # insert menu on db
+        if db_path != 'NULL':
+            query = "insert into menu values('"+shopid+"','"+menuname+"',"+str(menuprice)+",'"+db_path+"')"
+        else:
+            query = "insert into menu values('"+shopid+"','"+menuname+"',"+str(menuprice)+","+db_path+")"
+        cursor.execute(query)
+        connect.commit()
+
+        return redirect('menuRegist')
+    else:
+        menus = []
+        menu_query = "select name, price, filename from menu where shopid='"+shopid+"'"
+        cursor.execute(menu_query)
+        for menu in cursor:
+            menus.append(menu)
+        return render(request, 'menuRegist.html', {'menus':menus})
+    

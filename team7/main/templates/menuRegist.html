@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <title>메뉴 등록</title>
+  </head>
+
+  <body class='text-center'>
+    <h5 class='p-3 m-0 bg-info'>현재 메뉴</h5>
+    <div class='d-flex align-items-center flex-column'>
+      {% for menu in menus %}
+        {% if menu.2 is not None %}
+          <div class="card my-1" style="width: 18rem;">
+            <img src="{{menu.2}}" class="card-img-top" height='286' alt="">
+            <div class="card-body">
+              <h5 class="card-title">{{menu.0}}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{menu.1}}</h6>
+            </div>
+          </div>
+        {% else %}
+          <div class="card my-1" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{menu.0}}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{menu.1}}</h6>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    메뉴 추가
+    <form class='container ' action="" method='post' enctype='multipart/form-data'>
+      {% csrf_token %}
+      <div class='my-2'>메뉴명:
+        <input class='form-control' type="text" id='menu-name' name='menu-name'>
+      </div>
+      <div class='my-2'>가격:
+        <input class='form-control' type="number" id='menu-price' name='menu-price'>
+      </div>
+      <div class='my-2'>첨부 사진:
+        <input class='form-control' type="file" id='menu-img' name='menu-img'>
+      </div>
+      <input class='btn btn-primary mb-2' type="submit" value='메뉴 등록'>
+    </form>
+  </body>
+
+</html>
