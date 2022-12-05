@@ -11,8 +11,8 @@ os.chdir('C:\\oracle\\instantclient_21_7')
 os.putenv('NLS_LANG', 'AMERICAN_AMERICA.UTF8')
 
 import cx_Oracle as ora
-# connect  = ora.connect('project','project','localhost:1521/orcl')
-connect  = ora.connect('team7','comp322','localhost:1521/orcl')
+connect  = ora.connect('project','project','localhost:1521/orcl')
+# connect  = ora.connect('team7','comp322','localhost:1521/orcl')
 cursor = connect.cursor()
 
 def register(request):
