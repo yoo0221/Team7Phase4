@@ -23,9 +23,11 @@
         {{rows.3}}
         {{rows.4}}
       </div>
-      <div>
-        Tel.{{tel.0}}
-      </div>
+      {% if is_shop %}
+        <div>
+          Tel.{{tel.0}}
+        </div>
+      {% endif %}
     {% endfor %}
 
     <div class='mt-2'>
@@ -83,6 +85,11 @@
           <input type="submit" value='작성' class='col-2 btn btn-info'>
         </form>
       </div>
+    </div>
+    <div class='my-2'>
+      <a href="{% url 'index' %}">
+        <button class='btn btn-primary'>홈으로</button>
+      </a>
     </div>
   </body>
 
