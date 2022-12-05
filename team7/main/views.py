@@ -59,8 +59,11 @@ def index(request):
     
     menus = []
     if is_user == 0:
-        menu_query = "select "
-    return render(request, 'index.html', {'list':list,'list2':list2,'couplename':couple_name, 'is_user':is_user})
+        menu_query = "select name, price from menu where shopid='"+str(request.user)+"'"
+        cursor.execute(menu_query)
+        for rows in cursor:
+            menus.append(rows)
+    return render(request, 'index.html', {'list':list,'list2':list2,'couplename':couple_name, 'is_user':is_user , 'menus':menus})
 
 @login_required
 def courseSearch(request):
