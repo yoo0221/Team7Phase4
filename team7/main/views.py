@@ -10,7 +10,8 @@ os.chdir('C:\\oracle\\instantclient_21_7')
 os.putenv('NLS_LANG', 'AMERICAN_AMERICA.UTF8')
 
 import cx_Oracle as ora
-connect  = ora.connect('team7','comp322','localhost:1521/orcl')
+connect  = ora.connect('project','project','localhost:1521/orcl')
+# connect  = ora.connect('team7','comp322','localhost:1521/orcl')
 cursor = connect.cursor()
 
 # Create your views here.
@@ -48,7 +49,10 @@ def index(request):
     cursor.execute(query)
     for rows in cursor:
         is_user = 0
-
+    
+    menus = []
+    if is_user == 0:
+        menu_query = "select "
     return render(request, 'index.html', {'list':list,'list2':list2,'couplename':couple_name, 'is_user':is_user})
 
 @login_required

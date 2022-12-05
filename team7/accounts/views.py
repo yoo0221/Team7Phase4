@@ -11,8 +11,8 @@ os.chdir('C:\\oracle\\instantclient_21_7')
 os.putenv('NLS_LANG', 'AMERICAN_AMERICA.UTF8')
 
 import cx_Oracle as ora
-# connect  = ora.connect('project','project','localhost:1521/orcl')
-connect  = ora.connect('team7','comp322','localhost:1521/orcl')
+connect  = ora.connect('project','project','localhost:1521/orcl')
+# connect  = ora.connect('team7','comp322','localhost:1521/orcl')
 cursor = connect.cursor()
 
 def register(request):
@@ -117,12 +117,12 @@ def create_user(request):
         cursor.execute(couple_id_query)
         couple_id = 0
         for ids in cursor:
-            couple_id = ids[0] + 1
+            couple_id = int(ids[0]) + 1
         aware = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
         s_date = aware.strftime('%Y-%m-%d')
         couple_insert_query = ("insert into couple values('"+str(couple_id)+"', '"+ code +"', to_date('"+ s_date +"', 'yyyy-mm-dd'))")
         cursor.execute(couple_insert_query)
-        connect.commit()
+        # connect.commit()
 
     # insert to users table
     # get coupleID
@@ -131,6 +131,10 @@ def create_user(request):
     couple_id = 0
     for ids in cursor:
         couple_id = ids[0]
+    # check coupleID existance
+    if couple_id == 0:
+        return redirect('register')
+
     insert_user_query = ("insert into users values ('"+id+"', '"+password+"', '"+ first_name +"', '"+ last_name +"', '"+sex+"', '"+ str(couple_id) +"' )")
     cursor.execute(insert_user_query)
     connect.commit()
@@ -162,7 +166,7 @@ def create_shop(request):
     is_place_regist=request.POST['is-not-exist-place']
 
     # 1) id redundant check
-    users_query = ("select username from users")
+    users_query = ("select shopid from shop")
     cursor.execute(users_query)
     for users in cursor:
         if users[0] == shopid:
@@ -215,7 +219,7 @@ def create_shop(request):
     else:
         placeid=int(request.POST['place'])
         # update place
-        place_update_shop = "update place set shopid='"+ shopid +"' where placeid="+placeid
+        place_update_shop = "update place set shopid='"+ shopid +"' where placeid="+str(placeid)
         cursor.execute(place_update_shop)
         connect.commit()
 

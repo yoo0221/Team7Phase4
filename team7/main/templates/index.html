@@ -33,6 +33,15 @@
       {% endfor %}
     </div>
   {% else %}
-
+    <h5>메뉴 목록</h5>
+    {% for rows in list2 %}
+      <div class='card' style='width: 100%;'>
+        <div class='card-body d-flex'>
+          <div class='flex-fill text-center'>{{ forloop.counter }}</div>
+          <div class='flex-fill text-center'>{{ rows.0 }}</div>
+          <div class='flex-fill text-center'>{{ rows.1|date:"Y/m/d(D) h:i:s" }}</div>
+        </div>
+      </div>
+    {% endfor %}
   {% endif %}
 {% endblock %}
