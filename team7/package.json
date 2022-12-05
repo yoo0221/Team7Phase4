@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
     "oracledb": "^5.5.0"
   }
 }
