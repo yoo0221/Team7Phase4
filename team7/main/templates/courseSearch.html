@@ -1,54 +1,76 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <title>코스 검색하기</title>
-</head>
-<body>
-    <form action = "{% url "courseSearchbyKey" %}" method = "POST">
-        {% csrf_token %}
-        <h3>코스 검색 페이지입니다.</h3>
-        <h4>검색할 내용을 입력하세요</h4>
-        <input type = "text" name = "searchKey" placeholder="검색어를 입력하세요.">
-        <input type = "submit" value = "검색">
+  </head>
+
+  <body class='text-center justify-content-center align-items-center'>
+    <form action="{% url "courseSearchbyKey" %}" method="POST">
+      {% csrf_token %}
+      <div class='row bg-info p-3'>
+        <input class='col form-control ms-4' type="text" name="searchKey" placeholder="검색어를 입력하세요.">
+        <input class='col-2 btn btn-primary me-4' type="submit" value="검색">
+      </div>
     </form>
     {% if key != 'NULL'%}
-    <h4>카테고리 이름에 {{key}}(이)가 포함된 장소가 속한 코스 목록</h4>
-    <table border = "1">
+      <div class='d-flex justify-content-center align-items-center my-2'>
+        <button class='mx-2 btn btn-outline-primary'>{{key}}</button>
+        <strong>카테고리</strong>에 대한 검색결과
+      </div>
+
+      <table class='container' border="1">
         <th>순번</th>
         <th>CourseID</th>
         <th>코스 이름</th>
         <th>바로 가기</th>
         {% for rows in list %}
-        <tr>
+          <tr>
             <td>{{forloop.counter}}</td>
             <td>{{rows.0}}</td>
             <td>{{rows.1}}</td>
-            <td><a href="{% url 'courseDetail' rows.0 %}"><button>상세보기</button></a> </td>
-        </tr>
+            <td>
+              <a href="{% url 'courseDetail' rows.0 %}">
+                <button>상세보기</button>
+              </a>
+            </td>
+          </tr>
         {% endfor %}
-    </table>
-    <h4>이름에 {{key}}(이)가 포함된 코스 목록</h4>
-    <table border = "1">
+      </table>
+      <div class='d-flex justify-content-center align-items-center my-2'>
+        <h5 class='mx-3'>
+          '{{key}}'
+        </h5>
+        <strong>코스 이름</strong>에 대한 검색 결과
+      </div>
+      <table class='container' border="1">
         <th>순번</th>
         <th>CourseID</th>
         <th>코스 이름</th>
         <th>바로 가기</th>
         {% for rows in list2 %}
-        <tr>
+          <tr>
             <td>{{forloop.counter}}</td>
             <td>{{rows.0}}</td>
             <td>{{rows.1}}</td>
-            <td><a href="{% url 'courseDetail' rows.0 %}"><button>상세보기</button></a> </td>
-        </tr>
+            <td>
+              <a href="{% url 'courseDetail' rows.0 %}">
+                <button>상세보기</button>
+              </a>
+            </td>
+          </tr>
         {% endfor %}
-    </table>
+      </table>
     {% endif %}
-    <form action = "{% url "index" %}" method = "POST">
-        {% csrf_token %}
-        <input type = "submit" value="홈으로">
-    </form>
-</body>
+    <a href="{% url 'index' %}">
+      <button class='my-3 btn btn-primary'>홈으로</button>
+    </a>
+
+  </body>
+
 </html>

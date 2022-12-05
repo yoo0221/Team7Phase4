@@ -288,22 +288,6 @@ def placeCommentRegist(request, placeid):
     cursor.execute(query)
     connect.commit()
 
-    # query = ("select C.name, P.name,P.location_city,P.location_district,P.location_street, P.location_address, P.placeid, C.courseid" + 
-    #         " from (course C join course_consist CC on C.courseID=CC.courseID)" +
-    #          " join place P on P.placeID=CC.placeID where C.courseID ="+ str(placeid))
-    # cursor.execute(query) 
-    # list1 = []
-
-    # for rows in cursor:
-    #     list1.append(rows)  
-    # coursename = rows[0]
-
-    # query = "select text, author, created_time from course_comment where courseid = " + str(courseid)
-    # cursor.execute(query) 
-    # list2 = []
-    # for rows in cursor:
-    #     list2.append(rows)
-    # return render(request, 'courseDetail.html',{ 'coursename':coursename,'list1':list1,'list2':list2,'courseid':courseid})
     return redirect('placeDetail', placeid=placeid)
 
 @login_required
