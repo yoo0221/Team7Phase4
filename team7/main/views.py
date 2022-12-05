@@ -91,11 +91,12 @@ def placeDetail(request, placeid):
     query = "select name, location_city,location_district,location_street,location_address, shopid from place where placeid = " + str(placeid)
     query2 = "select categoryname from place_in_category where placeid = " + str(placeid)
     query3 = "select text, author, created_time from place_comment where placeid = " + str(placeid) + " order by created_time desc"
-
+    query4 = "select filename from photo where placeid="+str(placeid)
     list1 = []
     list2 = []
     list3 = []
     menus = []
+    imgs = []
     tel = ''
     shopid = ''
     is_shop = False
@@ -127,8 +128,13 @@ def placeDetail(request, placeid):
         cursor.execute(menu_query)
         for menu in cursor:
             menus.append(menu)
+
+    # 사진 목록
+    cursor.execute(query4)
+    for rows in cursor:
+        imgs.append(rows)
     
-    return render(request, 'placeDetail.html',{'list1':list1,'list2':list2,'list3':list3, 'placeid':placeid, 'is_shop':is_shop, 'menus':menus, 'tel':tel})
+    return render(request, 'placeDetail.html',{'list1':list1,'list2':list2,'list3':list3, 'placeid':placeid, 'is_shop':is_shop, 'menus':menus, 'tel':tel, 'imgs':imgs})
 
 @login_required
 def placeRegist(request):
@@ -224,7 +230,23 @@ def placeRegSubmit(request):
     # placeStreet = request.POST['placeStreet']
     # placeAddress = request.POST['placeAddress']
     categoryList = request.POST.getlist('categories[]')
-    
+    db_path = []
+    try:
+        placeimgs = request.FILES.getlist('place-imgs')
+        # 이미지 처리
+        dir_path = os.path.join(settings.BASE_DIR, 'media')
+        for img in placeimgs:
+            img_name = rand_imgname()
+            file_name = dir_path+'/img/'+img_name+'.jpg'
+
+            destination = open(file_name, 'wb+')
+            for chunk in img.chunks():
+                destination.write(chunk)
+            destination.close()
+            db_path.append('/media/img/'+img_name+'.jpg')
+    except:
+        db_path = 'NULL'
+
     address = placeTotalAddress.split()
     if len(address) > 5:
         address.pop(2)
@@ -250,6 +272,20 @@ def placeRegSubmit(request):
     for category in categoryList:
         query2 = "insert into place_in_category values('"+category+"',"+str(max_placeid+1)+")"
         cursor.execute(query2)
+
+    # insert on photo
+    # get max of photo
+    reg_no = 0
+    query = "select max(regno) from photo"
+    cursor.execute(query)
+    for rows in cursor:
+        reg_no=rows[0]+1
+    if db_path != 'NULL':
+        for path in db_path:
+            query = "insert into photo values("+str(reg_no)+", "+str(max_placeid+1)+", '"+path+"')"
+            cursor.execute(query)
+            reg_no += 1
+
     connect.commit()
     return redirect('registComplete')
 

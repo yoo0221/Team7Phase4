@@ -13,7 +13,7 @@
   </head>
 
   <body>
-    <form class='container justify-item-center' action="{% url "placeRegSubmit" %}" method="POST">
+    <form class='container justify-item-center' action="{% url "placeRegSubmit" %}" method="POST" enctype='multipart/form-data'>
       {% csrf_token %}
       <div class='container my-2'>
         <div id='menu-wrap' class="card container" style="">
@@ -52,7 +52,13 @@
           {% endfor %}
 
         </table> {% endcomment %}
-        <input class='my-3 btn btn-primary' type="submit" value="등록하기">
+        </div>
+      <div class='row my-2'>
+        <h5>선택한 장소의 사진들을 업로드해주세요!</h5>
+        <input class='form-control' type="file" id='place-imgs' name='place-imgs' multiple>
+      </div>
+      <div class='row'>
+      <input class='my-3 btn btn-primary' type="submit" value="등록하기">
       </div>
     </form>
     <script>
